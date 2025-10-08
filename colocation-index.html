@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Колокейшн на подстанциях | АО «Россети Кубань»</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary-color: #1a237e;
+      --secondary-color: #3949ab;
+      --accent-color: #00acc1;
+      --text-light: #ffffff;
+      --text-dark: #212121;
+      --bg-dark: #0d1117;
+      --bg-card: #161b22;
+      --gradient-1: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+      --gradient-2: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #0a0e27;
+      color: var(--text-light);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* Анимированный фон */
+    .bg-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: linear-gradient(to bottom, #0a0e27 0%, #1a237e 100%);
+      overflow: hidden;
+    }
+    
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle at 20% 80%, rgba(0, 172, 193, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(57, 73, 171, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(26, 35, 126, 0.3) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(-30px, -30px) rotate(120deg); }
+      66% { transform: translate(30px, -20px) rotate(240deg); }
+    }
+    
+    /* Хедер */
+    header {
+      position: relative;
+      padding: 80px 20px;
+      text-align: center;
+      background: rgba(26, 35, 126, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #00acc1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 20px rgba(0, 172, 193, 0.3);
+    }
+    
+    header p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* Электрическая сетка анимация */
+    .electric-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+    
+    .electric-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #00acc1, transparent);
+      animation: electric 3s linear infinite;
+    }
+    
+    .electric-line:nth-child(1) { top: 20%; width: 60%; left: -60%; animation-duration: 4s; }
+    .electric-line:nth-child(2) { top: 50%; width: 80%; right: -80%; animation-duration: 5s; animation-direction: reverse; }
+    .electric-line:nth-child(3) { top: 80%; width: 70%; left: -70%; animation-duration: 3.5s; }
+    
+    @keyframes electric {
+      to { transform: translateX(200%); }
+    }
+    
+    /* Основной контент */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .intro {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: rgba(22, 27, 34, 0.6);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 172, 193, 0.1);
+    }
+    
+    .intro p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      opacity: 0.9;
+    }
+    
+    /* Определение колокейшн */
+    .definition {
+      background: linear-gradient(135deg, rgba(0, 172, 193, 0.1) 0%, rgba(57, 73, 171, 0.1) 100%);
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(0, 172, 193, 0.3);
+    }
+    
+    .definition h3 {
+      color: #00acc1;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+    
+    /* Грид с карточками */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .card {
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-2);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 172, 193, 0.3);
+      border-color: rgba(0, 172, 193, 0.5);
+    }
+    
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .card-content {
+      padding: 40px 30px;
+    }
+    
+    .card-number {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background: var(--gradient-2);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.25rem;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 172, 193, 0.3);
+    }
+    
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+      color: var(--text-light);
+    }
+    
+    .card p {
+      opacity: 0.8;
+      font-size: 0.95rem;
+    }
+    
+    /* Футер */
+    footer {
+      background: rgba(13, 17, 23, 0.8);
+      backdrop-filter: blur(20px);
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 100px;
+    }
+    
+    footer p {
+      opacity: 0.7;
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      header {
+        padding: 50px 20px;
+      }
+      
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .intro {
+        padding: 25px;
+      }
+    }
+    
+    /* Анимация появления */
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(6) { animation-delay: 0.6s; }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <header>
+    <div class="electric-grid">
+      <div class="electric-line"></div>
+      <div class="electric-line"></div>
+      <div class="electric-line"></div>
+    </div>
+    <h1>Колокейшн на подстанциях</h1>
+    <p>Инновационная услуга размещения телекоммуникационного оборудования на энергетических объектах АО «Россети Кубань»</p>
+  </header>
+  
+  <main>
+    <section class="intro fade-in">
+      <div class="definition">
+        <h3>Что такое колокейшн?</h3>
+        <p><strong>Колокейшн</strong> (от англ. colocation — «совместное размещение») — это услуга предоставления физического пространства, электропитания, охлаждения и подключения к каналам связи для размещения серверного и телекоммуникационного оборудования клиента на технической площадке провайдера услуг.</p>
+      </div>
+      <p>
+        Мы предлагаем уникальную возможность размещения вашего оборудования связи на действующих электрических подстанциях. 
+        Это решение обеспечивает надёжную инфраструктуру, бесперебойное электропитание и стратегически выгодное расположение 
+        для развёртывания сетей связи нового поколения.
+      </p>
+    </section>
+    
+    <div class="cards-grid">
+      <a href="glossary.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">1</div>
+          <h3>Термины и сокращения</h3>
+          <p>Полный справочник технических терминов и расшифровка аббревиатур, используемых в документации</p>
+        </div>
+      </a>
+      
+      <a href="roadmap.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">2</div>
+          <h3>Дорожная карта</h3>
+          <p>Поэтапный план внедрения услуги с контрольными точками и ключевыми показателями</p>
+        </div>
+      </a>
+      
+      <a href="templates.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">3</div>
+          <h3>Шаблоны документов</h3>
+          <p>Готовые образцы договоров, регламентов и чек-листов для организации работ</p>
+        </div>
+      </a>
+      
+      <a href="pricing.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">4</div>
+          <h3>Тарифы и пакеты</h3>
+          <p>Прозрачная система ценообразования с гибкими тарифными планами</p>
+        </div>
+      </a>
+      
+      <a href="substations.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">5</div>
+          <h3>Доступные подстанции</h3>
+          <p>Актуальный список объектов с указанием свободных мест для размещения</p>
+        </div>
+      </a>
+      
+      <a href="business-plan.html" class="card fade-in">
+        <div class="card-content">
+          <div class="card-number">6</div>
+          <h3>Бизнес-план</h3>
+          <p>Финансовая модель проекта с прогнозом выручки и сроками окупаемости</p>
+        </div>
+      </a>
+    </div>
+  </main>
+  
+  <footer>
+    <p>&copy; 2025 АО «Россети Кубань». Все права защищены.</p>
+  </footer>
+  
+  <script>
+    // Добавляем интерактивность
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
